@@ -86,7 +86,8 @@ namespace Speckle.Addin
             var viewModel = new MainViewModel();
             MainWindow = new MainWindow
             {
-                DataContext = viewModel
+                DataContext = viewModel,
+                Title = "Speckle for SolidWorks"
             };
 
             //Task.Run(() => app.Run(MainWindow));
