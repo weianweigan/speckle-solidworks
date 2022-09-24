@@ -22,16 +22,28 @@ namespace Speckle.Addin
     [Icon(typeof(Resources), nameof(Properties.Resources.logo))]
     public class Addin : SwAddInEx
     {
+        const int GWL_HWNDPARENT = -8;
+
+        #region Properties
         public string AddinDir { get; } = Path.GetDirectoryName(typeof(Addin).Assembly.Location);
 
         public static Window MainWindow { get; private set; }
+        #endregion
 
+        #region Win32 API
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr value);
+        #endregion
+
+        #region Public Methods
         public override void OnConnect()
         {
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             CommandManager.AddCommandGroup<SwCommands>().CommandClick += Addin_CommandClick; ;
         }
+        #endregion
 
+        #region Private Methods
         private void Addin_CommandClick(SwCommands spec)
         {
             try
@@ -51,7 +63,7 @@ namespace Speckle.Addin
               .LogToTrace()
               .UseReactiveUI();
 
-        public static void CreateOrFocusSpeckle()
+        public void CreateOrFocusSpeckle()
         {
             if (MainWindow == null)
             {
@@ -59,9 +71,17 @@ namespace Speckle.Addin
             }
 
             MainWindow.Show();
+            MainWindow.Activate();
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                var parentHwnd = Application.WindowHandle;
+                var hwnd = MainWindow.PlatformImpl.Handle.Handle;
+                SetWindowLongPtr(hwnd, GWL_HWNDPARENT, parentHwnd);
+            }
         }
 
-        private static void AppMain(Application app, string[] args)
+        private void AppMain(Application app ,string[] args)
         {
             var viewModel = new MainViewModel();
             MainWindow = new MainWindow
@@ -80,7 +100,9 @@ namespace Speckle.Addin
             }
         }
 
-        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        private Assembly CurrentDomain_AssemblyResolve(
+            object sender, 
+            ResolveEventArgs args)
         {
             var assemblyPath = string.Empty;
             var assemblyName = new AssemblyName(args.Name).Name + ".dll";
@@ -108,5 +130,6 @@ namespace Speckle.Addin
                     ex);
             }
         }
+        #endregion
     }
 }
