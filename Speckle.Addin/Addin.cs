@@ -13,6 +13,8 @@ using Xarial.XCad.Base.Attributes;
 using Xarial.XCad.SolidWorks;
 using Xarial.XCad.UI.Commands;
 using DesktopUI2.ViewModels;
+using Xarial.XCad.Utils.PageBuilder.Exceptions;
+using System.Threading.Tasks;
 
 namespace Speckle.Addin
 {
@@ -41,6 +43,11 @@ namespace Speckle.Addin
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             CommandManager.AddCommandGroup<SwCommands>().CommandClick += Addin_CommandClick; ;
         }
+
+        public override void OnDisconnect()
+        {
+            MainWindow?.Close();
+        }
         #endregion
 
         #region Private Methods
@@ -49,6 +56,10 @@ namespace Speckle.Addin
             try
             {
                 CreateOrFocusSpeckle();
+            }
+            catch (InvalidComObjectException)
+            {
+
             }
             catch (Exception ex)
             {
@@ -68,10 +79,9 @@ namespace Speckle.Addin
             if (MainWindow == null)
             {
                 BuildAvaloniaApp().Start(AppMain, null);
-            }
 
-            MainWindow.Show();
-            MainWindow.Activate();
+
+            }
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -79,6 +89,9 @@ namespace Speckle.Addin
                 var hwnd = MainWindow.PlatformImpl.Handle.Handle;
                 SetWindowLongPtr(hwnd, GWL_HWNDPARENT, parentHwnd);
             }
+
+            MainWindow.Show();
+            MainWindow.Activate();
         }
 
         private void AppMain(Application app ,string[] args)
@@ -86,18 +99,19 @@ namespace Speckle.Addin
             var viewModel = new MainViewModel();
             MainWindow = new MainWindow
             {
-                DataContext = viewModel
+                DataContext = viewModel,
+                Title = "Speckle for SolidWorks"
             };
 
-            //Task.Run(() => app.Run(MainWindow));
-            if (app == null)
-            {
-                MainWindow.Show();
-            }
-            else
-            {
-                app.Run(MainWindow);
-            }
+            Task.Run(() => app.Run(MainWindow));
+            //if (app == null)
+            //{
+            //    MainWindow.Show();
+            //}
+            //else
+            //{
+            //    app.Run(MainWindow);
+            //}
         }
 
         private Assembly CurrentDomain_AssemblyResolve(

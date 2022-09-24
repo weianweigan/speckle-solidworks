@@ -3,84 +3,95 @@ using DesktopUI2.Models;
 using DesktopUI2.Models.Filters;
 using DesktopUI2.Models.Settings;
 using DesktopUI2.ViewModels;
+using SolidWorks.Interop.sldworks;
 using Speckle.Core.Kits;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xarial.XCad.SolidWorks;
 
 namespace Speckle.Addin.UI
 {
-    public class ConnectorBindingsSolidWorks : ConnectorBindings
+    public partial class ConnectorBindingsSolidWorks : ConnectorBindings
     {
-        public override bool CanPreviewSend => throw new NotImplementedException();
+        public ConnectorBindingsSolidWorks(ISwApplication swApp)
+        {
+            SwApp = swApp;
+            App = SwApp.Sw;
+        }
 
-        public override bool CanPreviewReceive => throw new NotImplementedException();
+        public override bool CanPreviewSend => true;
+
+        public override bool CanPreviewReceive => true;
+
+        public ISldWorks App { get; }
+        public ISwApplication SwApp { get; }
 
         public override string GetActiveViewName()
         {
-            throw new NotImplementedException();
+            return App.IActiveDoc2?.IActiveView?.ToString();
         }
 
         public override List<MenuItem> GetCustomStreamMenuItems()
         {
-            throw new NotImplementedException();
+            return new List<MenuItem>();
         }
 
         public override string GetDocumentId()
         {
-            throw new NotImplementedException();
+            return App.IActiveDoc2?.GetTitle();
         }
 
         public override string GetDocumentLocation()
         {
-            throw new NotImplementedException();
+            return App.IActiveDoc2?.GetPathName();
         }
 
         public override string GetFileName()
         {
-            throw new NotImplementedException();
+            return App.IActiveDoc2?.GetTitle();
         }
 
         public override string GetHostAppName()
         {
-            throw new NotImplementedException();
+            return "SolidWorks";
         }
 
         public override string GetHostAppNameVersion()
         {
-            throw new NotImplementedException();
+            return SwApp.Version.DisplayName;
         }
 
         public override List<string> GetObjectsInView()
         {
-            throw new NotImplementedException();
+            return new List<string>();
         }
 
         public override List<ReceiveMode> GetReceiveModes()
         {
-            throw new NotImplementedException();
+            return new List<ReceiveMode>();
         }
 
         public override List<string> GetSelectedObjects()
         {
-            throw new NotImplementedException();
+            return new List<string>();
         }
 
         public override List<ISelectionFilter> GetSelectionFilters()
         {
-            throw new NotImplementedException();
+            return new List<ISelectionFilter>();
         }
 
         public override List<ISetting> GetSettings()
         {
-            throw new NotImplementedException();
+            return new List<ISetting>();
         }
 
         public override List<StreamState> GetStreamsInFile()
         {
-            throw new NotImplementedException();
+            return new List<StreamState>();
         }
 
         public override Task<Dictionary<string, List<MappingViewModel.MappingValue>>> ImportFamilyCommand(Dictionary<string, List<MappingViewModel.MappingValue>> Mapping)
@@ -123,4 +134,5 @@ namespace Speckle.Addin.UI
             throw new NotImplementedException();
         }
     }
+
 }
