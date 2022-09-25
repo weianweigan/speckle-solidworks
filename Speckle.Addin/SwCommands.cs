@@ -1,4 +1,4 @@
-﻿using Speckle.Addin.Properties;
+﻿using Speckle.ConnectorSolidWorks.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xarial.XCad.Base.Attributes;
 
-namespace Speckle.Addin
+namespace Speckle.ConnectorSolidWorks
 {
     [Title("Speckle")]
     [Icon(typeof(Resources), nameof(Properties.Resources.logo))]

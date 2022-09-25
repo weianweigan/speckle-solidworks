@@ -2,7 +2,7 @@
 using SolidWorks.Interop.swconst;
 using System;
 
-namespace Speckle.Addin
+namespace Speckle.ConnectorSolidWorks
 {
     public static class PIDUtil
     {

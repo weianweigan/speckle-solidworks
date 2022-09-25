@@ -1,21 +1,19 @@
 ﻿using DesktopUI2;
 using DesktopUI2.Models;
-using DesktopUI2.Models.Filters;
 using DesktopUI2.Models.Settings;
-using DesktopUI2.ViewModels;
 using SolidWorks.Interop.sldworks;
 using Speckle.Core.Kits;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xarial.XCad.SolidWorks;
 
-namespace Speckle.Addin.UI
+namespace Speckle.ConnectorSolidWorks.UI
 {
     public partial class ConnectorBindingsSolidWorks : ConnectorBindings
     {
+        public const string APP_NAME = "SolidWorks";
+
         public ConnectorBindingsSolidWorks(ISwApplication swApp)
         {
             SwApp = swApp;
@@ -27,6 +25,7 @@ namespace Speckle.Addin.UI
         public override bool CanPreviewReceive => true;
 
         public ISldWorks App { get; }
+
         public ISwApplication SwApp { get; }
 
         public override string GetActiveViewName()
@@ -56,7 +55,7 @@ namespace Speckle.Addin.UI
 
         public override string GetHostAppName()
         {
-            return "SolidWorks";
+            return APP_NAME;
         }
 
         public override string GetHostAppNameVersion()
@@ -66,7 +65,12 @@ namespace Speckle.Addin.UI
 
         public override List<string> GetObjectsInView()
         {
-            return new List<string>();
+            //Return All Features
+            var doc = App.IActiveDoc2;
+            return doc
+                ?.GetAllFeatures()
+                .Select(p => p.Name)
+                .ToList();
         }
 
         public override List<ReceiveMode> GetReceiveModes()
@@ -74,57 +78,12 @@ namespace Speckle.Addin.UI
             return new List<ReceiveMode>();
         }
 
-        public override List<string> GetSelectedObjects()
-        {
-            return new List<string>();
-        }
-
-        public override List<ISelectionFilter> GetSelectionFilters()
-        {
-            return new List<ISelectionFilter>();
-        }
-
-        public override List<ISetting> GetSettings()
-        {
-            return new List<ISetting>();
-        }
-
         public override List<StreamState> GetStreamsInFile()
         {
             return new List<StreamState>();
         }
 
-        public override Task<Dictionary<string, List<MappingViewModel.MappingValue>>> ImportFamilyCommand(Dictionary<string, List<MappingViewModel.MappingValue>> Mapping)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Task<StreamState> PreviewReceive(StreamState state, ProgressViewModel progress)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void PreviewSend(StreamState state, ProgressViewModel progress)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Task<StreamState> ReceiveStream(StreamState state, ProgressViewModel progress)
-        {
-            throw new NotImplementedException();
-        }
-
         public override void ResetDocument()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void SelectClientObjects(List<string> objs, bool deselect = false)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Task<string> SendStream(StreamState state, ProgressViewModel progress)
         {
             throw new NotImplementedException();
         }
@@ -134,5 +93,4 @@ namespace Speckle.Addin.UI
             throw new NotImplementedException();
         }
     }
-
 }

@@ -2,7 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using DesktopUI2.Views;
-using Speckle.Addin.Properties;
+using Speckle.ConnectorSolidWorks.Properties;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -16,7 +16,7 @@ using DesktopUI2.ViewModels;
 using Xarial.XCad.Utils.PageBuilder.Exceptions;
 using System.Threading.Tasks;
 
-namespace Speckle.Addin
+namespace Speckle.ConnectorSolidWorks
 {
     [ComVisible(true)]
     [Title("Speckle")]
@@ -79,9 +79,10 @@ namespace Speckle.Addin
             if (MainWindow == null)
             {
                 BuildAvaloniaApp().Start(AppMain, null);
-
-
             }
+
+            MainWindow.Show();
+            MainWindow.Activate();
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -89,9 +90,6 @@ namespace Speckle.Addin
                 var hwnd = MainWindow.PlatformImpl.Handle.Handle;
                 SetWindowLongPtr(hwnd, GWL_HWNDPARENT, parentHwnd);
             }
-
-            MainWindow.Show();
-            MainWindow.Activate();
         }
 
         private void AppMain(Application app ,string[] args)
@@ -104,14 +102,6 @@ namespace Speckle.Addin
             };
 
             Task.Run(() => app.Run(MainWindow));
-            //if (app == null)
-            //{
-            //    MainWindow.Show();
-            //}
-            //else
-            //{
-            //    app.Run(MainWindow);
-            //}
         }
 
         private Assembly CurrentDomain_AssemblyResolve(
