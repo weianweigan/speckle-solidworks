@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Speckle.ConnectorSolidWorks.UI
+namespace Speckle.ConnectorSolidWorks.UI;
+
+public partial class ConnectorBindingsSolidWorks
 {
-    public partial class ConnectorBindingsSolidWorks
-    {
-    }
 }
