@@ -2,12 +2,15 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <UseWPF>true</UseWPF>
+	<XCadRegDll>false</XCadRegDll>
     <UseWindowsForms>true</UseWindowsForms>
     <LangVersion>latest</LangVersion>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia.Win32.Interoperability" Version="0.10.18" />
     <PackageReference Include="Speckle.DesktopUI" Version="2.14.2" />
+    <PackageReference Include="Speckle.Objects" Version="2.14.2" />
     <PackageReference Include="Xarial.XCad.SolidWorks" Version="0.7.12" />
   </ItemGroup>
   <ItemGroup>
