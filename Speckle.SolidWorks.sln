@@ -5,6 +5,10 @@ VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Speckle.ConnectorSolidWorks", "Speckle.Addin\Speckle.ConnectorSolidWorks.csproj", "{EDE2E262-B770-4F8D-B4C6-6B4F22C83A7C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Speckle.ConnectorSolidWorksTests", "Speckle.ConnectorSolidWorksTests\Speckle.ConnectorSolidWorksTests.csproj", "{2BC81041-79E6-4322-93AA-3458B90915B1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaHwndHost", "AvaloniaHwndHost\AvaloniaHwndHost.csproj", "{794FBE19-F50D-4BAB-9C3E-C793F3D2BA81}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{EDE2E262-B770-4F8D-B4C6-6B4F22C83A7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EDE2E262-B770-4F8D-B4C6-6B4F22C83A7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EDE2E262-B770-4F8D-B4C6-6B4F22C83A7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BC81041-79E6-4322-93AA-3458B90915B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BC81041-79E6-4322-93AA-3458B90915B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BC81041-79E6-4322-93AA-3458B90915B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BC81041-79E6-4322-93AA-3458B90915B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{794FBE19-F50D-4BAB-9C3E-C793F3D2BA81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{794FBE19-F50D-4BAB-9C3E-C793F3D2BA81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{794FBE19-F50D-4BAB-9C3E-C793F3D2BA81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{794FBE19-F50D-4BAB-9C3E-C793F3D2BA81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

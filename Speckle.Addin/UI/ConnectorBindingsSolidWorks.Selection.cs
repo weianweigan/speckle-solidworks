@@ -21,7 +21,7 @@ public partial class ConnectorBindingsSolidWorks
         }
     }
 
-    public override List<string> GetSelectedObjects()
+    public override List<string>? GetSelectedObjects()
     {
         var doc = App.IActiveDoc2;
 
@@ -33,6 +33,6 @@ public partial class ConnectorBindingsSolidWorks
 
     public override List<ISelectionFilter> GetSelectionFilters()
     {
-        return new List<ISelectionFilter>();
+        return SolidWorksSelectionFilter.CreateAll();
     }
 }

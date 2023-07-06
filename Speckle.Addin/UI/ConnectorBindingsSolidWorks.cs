@@ -26,7 +26,7 @@ public partial class ConnectorBindingsSolidWorks : ConnectorBindings
 
     public ISwApplication SwApp { get; }
 
-    public override string GetActiveViewName()
+    public override string? GetActiveViewName()
     {
         return App.IActiveDoc2?.IActiveView?.ToString();
     }
@@ -36,22 +36,22 @@ public partial class ConnectorBindingsSolidWorks : ConnectorBindings
         return new List<MenuItem>();
     }
 
-    public override string GetDocumentId()
+    public override string? GetDocumentId()
     {
         return App.IActiveDoc2?.GetTitle();
     }
 
-    public override string GetDocumentLocation()
+    public override string? GetDocumentLocation()
     {
         return App.IActiveDoc2?.GetPathName();
     }
 
-    public override string GetFileName()
+    public override string? GetFileName()
     {
         return App.IActiveDoc2?.GetTitle();
     }
 
-    public override string GetHostAppName()
+    public override string? GetHostAppName()
     {
         return APP_NAME;
     }
@@ -61,7 +61,7 @@ public partial class ConnectorBindingsSolidWorks : ConnectorBindings
         return SwApp.Version.DisplayName;
     }
 
-    public override List<string> GetObjectsInView()
+    public override List<string>? GetObjectsInView()
     {
         //Return All Features
         var doc = App.IActiveDoc2;

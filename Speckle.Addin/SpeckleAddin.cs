@@ -23,11 +23,12 @@ namespace Speckle.ConnectorSolidWorks;
 public partial class SpeckleAddin : SwAddInEx
 {
     const int GWL_HWNDPARENT = -8;
+    private bool _useTaskpane = true;
 
     #region Properties
     public string AddinDir { get; } = Path.GetDirectoryName(typeof(SpeckleAddin).Assembly.Location);
 
-    public static MainWindow MainWindow { get; private set; }
+    public static MainWindow? MainWindow { get; private set; }
     #endregion
 
     #region Win32 API
@@ -39,14 +40,17 @@ public partial class SpeckleAddin : SwAddInEx
     public override void OnConnect()
     {
         AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-        CommandManager.AddCommandGroup<SwCommands>().CommandClick += Addin_CommandClick; ;
+        CommandManager.AddCommandGroup<SwCommands>().CommandClick += Addin_CommandClick;
+
+        if (_useTaskpane)
+            CreateTaskpane();
     }
 
     public override void OnDisconnect()
     {
-        _taskpaneView.DeleteView();
+        _taskpaneView?.DeleteView();
         _taskpaneView = null;
-        _host.Dispose();
+        _host?.Dispose();
         _host = null;
     }
     #endregion
@@ -58,11 +62,18 @@ public partial class SpeckleAddin : SwAddInEx
         {
             case SwCommands.SolidWorksConnector:
                 {
-                    if (MainWindow == null)
+                    if (_useTaskpane)
                     {
-                        BuildAvaloniaApp().Start(AppMain, null);
+                        _taskpaneView?.ShowView();
                     }
-                    MainWindow.Show();
+                    else
+                    {
+                        if (MainWindow == null)
+                        {
+                            BuildAvaloniaApp().Start(AppMain, null);
+                        }
+                        MainWindow?.Show();
+                    }
                 }
                 break;
             default:
@@ -94,7 +105,7 @@ public partial class SpeckleAddin : SwAddInEx
         }
     }
 
-    private Assembly CurrentDomain_AssemblyResolve(
+    private Assembly? CurrentDomain_AssemblyResolve(
         object sender, 
         ResolveEventArgs args)
     {

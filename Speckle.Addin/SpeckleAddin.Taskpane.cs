@@ -1,30 +1,28 @@
 ﻿using Avalonia;
-using Avalonia.Win32.Embedding;
 using DesktopUI2.ViewModels;
-using DesktopUI2.Views;
 using SolidWorks.Interop.sldworks;
 using Speckle.ConnectorSolidWorks.UI;
 using Speckle.Core.Logging;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Windows.Forms.Integration;
 
 namespace Speckle.ConnectorSolidWorks;
 
 public partial class SpeckleAddin
 {
     #region Field
-    private TaskpaneView _taskpaneView;
-    private WinFormsAvaloniaControlHost _host;
+    private TaskpaneView? _taskpaneView;
+    private ElementHost? _host;
+    private SpeckleTaskPane? _pane;
     #endregion
-
-    public static MainUserControl MainUserControl { get; private set; }
 
     private void CreateTaskpane()
     {
         try
         {
-            if (MainUserControl == null)
+            if (_pane == null)
             {
                 BuildAvaloniaApp().Start(UserControlMain, null);
             }
@@ -35,13 +33,13 @@ public partial class SpeckleAddin
             _host = new()
             {
                 Dock = System.Windows.Forms.DockStyle.Fill,
-                Content = MainUserControl,
+                Child = _pane,
                 TabStop = false,
             };
 
             if (!_taskpaneView.DisplayWindowFromHandlex64(_host.Handle.ToInt64()))
             {
-                SpeckleLog.Logger.Warning("Failed to display Speckle taskpane.");
+                SpeckleLog.Logger.Warning("Failed to display Speckle Taskpane.");
             }
             _taskpaneView.ShowView();
         }
@@ -55,9 +53,9 @@ public partial class SpeckleAddin
     private void UserControlMain(Application app, string[] args)
     {
         var viewModel = new MainViewModel(new ConnectorBindingsSolidWorks(Application));
-        MainUserControl = new MainUserControl
+        _pane = new SpeckleTaskPane()
         {
-            DataContext = viewModel,
+            DataContext = viewModel
         };
     }
 }

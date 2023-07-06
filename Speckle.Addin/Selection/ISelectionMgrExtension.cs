@@ -84,7 +84,7 @@ public static class ISelectionMgrExtension
         }
     }
 
-    public static TSelection GetLastSelection<TSelection>(
+    public static TSelection? GetLastSelection<TSelection>(
         this ISelectionMgr seleMgr)
         where TSelection : class
     {

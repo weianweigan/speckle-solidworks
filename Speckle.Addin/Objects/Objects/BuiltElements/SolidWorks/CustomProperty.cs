@@ -12,7 +12,7 @@ public sealed class CustomProperty: Base
     public CustomProperty(
         string name, 
         string value, 
-        string evaluatedValue = null)
+        string? evaluatedValue = null)
     {
         Name = name;
         Value = value;
@@ -22,22 +22,22 @@ public sealed class CustomProperty: Base
     /// <summary>
     /// Property name.
     /// </summary>
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     /// <summary>
     /// Source value.
     /// </summary>
-    public string Value { get; set; }
+    public string? Value { get; set; }
 
     /// <summary>
     /// Configuration.
     /// </summary>
-    public string Configuration { get; set; }
+    public string? Configuration { get; set; }
 
     /// <summary>
     /// Eval Value.
     /// </summary>
-    public string EvaluatedValue { get; set; }
+    public string? EvaluatedValue { get; set; }
 
     ///<inheritdoc/>
     public override string ToString()

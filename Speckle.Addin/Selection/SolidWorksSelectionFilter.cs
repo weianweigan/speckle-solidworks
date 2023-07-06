@@ -1,6 +1,7 @@
 ﻿using DesktopUI2.Models.Filters;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Speckle.ConnectorSolidWorks.Selection;
 
@@ -11,9 +12,12 @@ public enum SolidWorksFilterType
     Equation, 
     AssemblyComponent,
     PartComponent,
-    Sketch,
-    Dimension,
 
+    Dimension,
+    Sketch,
+
+    SketchSegment,
+    SketchPoint,
 }
 
 /// <summary>
@@ -21,6 +25,32 @@ public enum SolidWorksFilterType
 /// </summary>
 public sealed class SolidWorksSelectionFilter : ISelectionFilter
 {
+    public SolidWorksSelectionFilter(SolidWorksFilterType filterType):
+        this(filterType.ToString(), filterType.ToString(), null, null, null, null, null, null)
+    {
+        
+    }
+
+    public SolidWorksSelectionFilter(
+        string name, 
+        string type, 
+        string? icon, 
+        string? slug, 
+        string? summary, 
+        string? description, 
+        List<string>? selection, 
+        Type? viewType)
+    {
+        Name = name;
+        Type = type;
+        Icon = icon;
+        Slug = slug;
+        Summary = summary;
+        Description = description;
+        Selection = selection;
+        ViewType = viewType;
+    }
+
     /// <summary>
     /// Name.
     /// </summary>
@@ -28,33 +58,23 @@ public sealed class SolidWorksSelectionFilter : ISelectionFilter
 
     public string Type { get; set; }
 
-    public string Icon { get ; set ; }
+    public string? Icon { get ; set ; }
 
-    public string Slug { get ; set ; }
+    public string? Slug { get ; set ; }
 
-    public string Summary { get ; set ; }
+    public string? Summary { get ; set ; }
 
-    public string Description { get ; set ; }
+    public string? Description { get ; set ; }
 
-    public List<string> Selection { get ; set ; }
+    public List<string>? Selection { get ; set ; }
 
-    public Type ViewType { get; set; }
+    public Type? ViewType { get; set; }
 
-    public static IList<SolidWorksSelectionFilter> Create()
+    public static List<ISelectionFilter> CreateAll()
     {
-        return new[]
-        {
-            new SolidWorksSelectionFilter
-            {
-                Name = "Part",
-                Type = "Part",
-                Icon = "Part",
-                Slug = "part",
-                Summary = "Select a part",
-                Description = "Select a part",
-                Selection = new List<string> { "Part" },
-                ViewType = typeof(SelectionView)
-            },
-        }
+        return Enum.GetValues(typeof(SolidWorksFilterType))
+            .OfType<SolidWorksFilterType>()
+            .Select(f => (ISelectionFilter)new SolidWorksSelectionFilter(f))
+            .ToList();
     }
 }

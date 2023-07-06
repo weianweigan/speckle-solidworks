@@ -2,17 +2,19 @@
 using SolidWorks.Interop.swconst;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Speckle.ConnectorSolidWorks.Selection;
 
 public class SwSeleTypeObjectPair : IEqualityComparer<SwSeleTypeObjectPair>
 {
+    [JsonConstructor]
     public SwSeleTypeObjectPair(
         int index, 
         swSelectType_e selectType,
         int mark,
         object selectedObject,
-        double[] point,
+        double[]? point,
         string pid)
     {
         SelectType = selectType;
@@ -32,23 +34,15 @@ public class SwSeleTypeObjectPair : IEqualityComparer<SwSeleTypeObjectPair>
         }
     }
 
-    public SwSeleTypeObjectPair(
-        object selectedObject, 
-        swSelectType_e selectType)
-    {
-        SelectType = selectType;
-        SelectedObject = selectedObject;
-    }
+    /// <summary>
+    /// Index base on 1.
+    /// </summary>
+    public int Index { get; }
 
     /// <summary>
-    /// Index from 1
+    /// Mark from SolidWorks.
     /// </summary>
-    public int Index { get; private set; }
-
-    /// <summary>
-    /// mark from SolidWorks
-    /// </summary>
-    public int Mark { get; private set; }
+    public int Mark { get; } = -1;
 
     public swSelectType_e SelectType { get; private set; }
 
@@ -65,26 +59,26 @@ public class SwSeleTypeObjectPair : IEqualityComparer<SwSeleTypeObjectPair>
     /// <summary>
     /// Custom tag for track, Optional
     /// </summary>
-    public object Tag { get; set; }
+    public object? Tag { get; set; }
 
     /// <summary>
     /// Selection point from use click
     /// </summary>
-    public double[] Point { get; set; }
+    public double[]? Point { get; set; }
 
     /// <summary>
     /// PID for this object，null default.
     /// </summary>
-    public string PID { get; set; }
+    public string PID { get; }
 
     public swPersistReferencedObjectStates_e ReSolveFormPID(IModelDoc2 doc)
     {
         if (string.IsNullOrEmpty(PID))
         {
-            throw new ArgumentNullException("请先对属性 PID 赋值");
+            throw new ArgumentNullException("PID Cannot be null!");
         }
 
-        var byteId = Convert.FromBase64String(PID);
+        byte[] byteId = Convert.FromBase64String(PID);
 
         SelectedObject = doc.Extension.GetObjectByPersistReference3(byteId, out int errorCode);
         return (swPersistReferencedObjectStates_e)errorCode;
@@ -110,7 +104,7 @@ public class SwSeleTypeObjectPair : IEqualityComparer<SwSeleTypeObjectPair>
             || SelectType == swSelectType_e.swSelVERTICES)
         {
             var entity = SelectedObject as IEntity;
-            if (!entity.IsSafe)
+            if (entity?.IsSafe == false)
                 SelectedObject = entity.GetSafeEntity();
         }
     }
