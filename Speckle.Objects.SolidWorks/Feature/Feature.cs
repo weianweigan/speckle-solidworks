@@ -2,7 +2,7 @@
 
 namespace Objects.BuiltElements.SolidWorks;
 
-public sealed class DrawingDocument : Base
+public class Feature: Base
 {
 
 }

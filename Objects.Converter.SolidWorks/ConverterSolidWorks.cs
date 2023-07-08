@@ -33,7 +33,7 @@ public sealed partial class ConverterSolidWorks : ISpeckleConverter
 
     public IEnumerable<string> GetServicedApplications()
     {
-        return new[] { "SolidWorks" };
+        return new[] { "SolidWorks"};
     }
 
     public void SetContextDocument(object doc)

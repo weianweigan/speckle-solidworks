@@ -12,7 +12,7 @@ public sealed class Component : Base, IDisplayValue<List<Mesh>>
     /// <remarks>
     /// IComponent2.Name2
     /// </remarks>
-    public string? Name { get; set; }
+    public string Name { get; set; }
 
     /// <summary>
     /// Id
@@ -25,9 +25,9 @@ public sealed class Component : Base, IDisplayValue<List<Mesh>>
 
     public bool IsInstance { get; set; }
 
-    public string? Configuration { get; set; }
+    public string Configuration { get; set; }
 
-    public List<Base>? CustomProperties { get; set; }
+    public List<Base> CustomProperties { get; set; }
 
 #pragma warning disable CS8618
     [DetachProperty]

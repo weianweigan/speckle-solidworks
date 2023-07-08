@@ -2,7 +2,7 @@
 
 namespace Objects.BuiltElements.SolidWorks;
 
-public sealed class PartDocument : Base
+public sealed class DrawingView: Base
 {
 
 }

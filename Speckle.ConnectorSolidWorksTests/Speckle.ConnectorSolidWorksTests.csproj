@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Speckle.Addin\Speckle.ConnectorSolidWorks.csproj" />
+    <ProjectReference Include="..\Speckle.Objects.SolidWorks\Speckle.Objects.SolidWorks.csproj" />
   </ItemGroup>
 
 </Project>

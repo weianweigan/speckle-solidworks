@@ -1,5 +1,6 @@
 ﻿using DesktopUI2.Views;
 using System;
+using System.Globalization;
 using System.Windows.Controls;
 
 namespace Speckle.ConnectorSolidWorks.UI;
@@ -7,8 +8,10 @@ namespace Speckle.ConnectorSolidWorks.UI;
 /// <summary>
 /// SpeckleTaskPane.xaml 的交互逻辑
 /// </summary>
-public partial class SpeckleTaskPane : Page
+public partial class SpeckleTaskPane : UserControl
 {
+    private const string FontFamilyForChinese = "Microsoft YaHei,Simsun,苹方-简,宋体-简";
+
     private const UInt32 DLGC_WANTARROWS = 0x0001;
     private const UInt32 DLGC_HASSETSEL = 0x0008;
     private const UInt32 DLGC_WANTCHARS = 0x0080;
@@ -33,6 +36,14 @@ public partial class SpeckleTaskPane : Page
 
     public void Init()
     {
+        var mainUserControl = new MainUserControl();
         AvaloniaHost.Content = new MainUserControl();
+
+        mainUserControl.FontFamily = CultureInfo.CurrentCulture.ThreeLetterWindowsLanguageName switch
+        {
+            "CHS" => FontFamilyForChinese,
+            "CHT" => FontFamilyForChinese,
+            _ => mainUserControl.FontFamily.ToString()
+        };
     }
 }

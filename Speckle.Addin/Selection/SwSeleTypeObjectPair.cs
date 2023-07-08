@@ -2,12 +2,14 @@
 using SolidWorks.Interop.swconst;
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Speckle.ConnectorSolidWorks.Selection;
 
-public class SwSeleTypeObjectPair : IEqualityComparer<SwSeleTypeObjectPair>
+public class SwSeleTypeObjectPair
 {
+    #region Ctor
     [JsonConstructor]
     public SwSeleTypeObjectPair(
         int index, 
@@ -33,7 +35,9 @@ public class SwSeleTypeObjectPair : IEqualityComparer<SwSeleTypeObjectPair>
             Name = pid;
         }
     }
+    #endregion
 
+    #region Properties
     /// <summary>
     /// Index base on 1.
     /// </summary>
@@ -70,7 +74,9 @@ public class SwSeleTypeObjectPair : IEqualityComparer<SwSeleTypeObjectPair>
     /// PID for this object，null default.
     /// </summary>
     public string PID { get; }
+    #endregion
 
+    #region Methods
     public swPersistReferencedObjectStates_e ReSolveFormPID(IModelDoc2 doc)
     {
         if (string.IsNullOrEmpty(PID))
@@ -82,16 +88,6 @@ public class SwSeleTypeObjectPair : IEqualityComparer<SwSeleTypeObjectPair>
 
         SelectedObject = doc.Extension.GetObjectByPersistReference3(byteId, out int errorCode);
         return (swPersistReferencedObjectStates_e)errorCode;
-    }
-
-    public bool Equals(SwSeleTypeObjectPair x, SwSeleTypeObjectPair y)
-    {
-        return x?.Name == y?.Name;
-    }
-
-    public int GetHashCode(SwSeleTypeObjectPair obj)
-    {
-        return obj?.Name.GetHashCode() ?? -1;
     }
 
     /// <summary>
@@ -113,4 +109,16 @@ public class SwSeleTypeObjectPair : IEqualityComparer<SwSeleTypeObjectPair>
     {
         return Name ?? base.ToString();
     }
+
+    public string ToJson()
+    {
+        return JsonSerializer.Serialize(this);
+    }
+
+    public static SwSeleTypeObjectPair FromJson(string json)
+    {
+        return JsonSerializer.Deserialize<SwSeleTypeObjectPair>(json) ?? 
+            throw new NullReferenceException("Cannot Deserialize SwSeleTypeObjectPair");
+    }
+    #endregion
 }

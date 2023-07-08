@@ -5,8 +5,10 @@ using Speckle.ConnectorSolidWorks.UI;
 using Speckle.Core.Logging;
 using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms.Integration;
+using Xarial.XCad.SolidWorks;
 
 namespace Speckle.ConnectorSolidWorks;
 
@@ -18,6 +20,14 @@ public partial class SpeckleAddin
     private SpeckleTaskPane? _pane;
     #endregion
 
+    /// <summary>
+    /// Create taskpane and show it.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="ISldWorks.CreateTaskpaneView3(object, string)"/> with 
+    /// <see href="https://help.solidworks.com/2022/english/api/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.ISldWorks~CreateTaskpaneView2.html"/>
+    /// <see href="https://help.solidworks.com/2022/english/api/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.ISldWorks~CreateTaskpaneView3.html"/>
+    /// </remarks>
     private void CreateTaskpane()
     {
         try
@@ -27,8 +37,23 @@ public partial class SpeckleAddin
                 BuildAvaloniaApp().Start(UserControlMain, null);
             }
 
-            string icon = Path.Combine(AddinDir, "Assets", "Images", "logo.png");
-            _taskpaneView = Application.Sw.CreateTaskpaneView2(icon, "Speckle");
+            if (Application.IsVersionNewerOrEqual(Xarial.XCad.SolidWorks.Enums.SwVersion_e.Sw2017))
+            {
+                string[] iconGroup = new[] { 
+                    "logo20x20.png", 
+                    "logo32x32.png", 
+                    "logo40x40.png", 
+                    "logo64x64.png", 
+                    "logo.png" }
+                    .Select(n => Path.Combine(AddinDir, "Assets", "Images", n))
+                    .ToArray();
+                _taskpaneView = Application.Sw.CreateTaskpaneView3(iconGroup, "Speckle");
+            }
+            else
+            {
+                string icon = Path.Combine(AddinDir, "Assets", "Images", "logo16x18.png");
+                _taskpaneView = Application.Sw.CreateTaskpaneView2(icon, "Speckle");
+            }
 
             _host = new()
             {
@@ -57,5 +82,6 @@ public partial class SpeckleAddin
         {
             DataContext = viewModel
         };
+        _pane.Init();
     }
 }

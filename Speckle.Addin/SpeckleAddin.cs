@@ -1,9 +1,23 @@
-﻿using Avalonia;
+﻿/*
+ * Speckle Connector for SolidWorks
+ * 
+ * Speckle:
+ *  https://speckle.systems
+ * 
+ * GitHub:
+ *  https://github.com/weianweigan/speckle-solidworks
+ * 
+ * Figma:
+ *  https://www.figma.com/file/DhGlDPUorH08nXtEus0Wtj/speckle-solidworks?type=design
+ */
+
+using Avalonia;
 using Avalonia.ReactiveUI;
 using DesktopUI2.ViewModels;
 using DesktopUI2.Views;
 using Speckle.ConnectorSolidWorks.Properties;
 using Speckle.ConnectorSolidWorks.UI;
+using Speckle.Core.Logging;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -11,17 +25,18 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Xarial.XCad.Base.Attributes;
+using Xarial.XCad.Base.Enums;
 using Xarial.XCad.SolidWorks;
 using Xarial.XCad.UI.Commands;
 
 namespace Speckle.ConnectorSolidWorks;
 
-[ComVisible(true)]
-[Title("Speckle")]
+[ComVisible(true), Guid(AddinId)]
+[Title("Speckle"), Icon(typeof(Resources), nameof(Resources.logo))]
 [Description("The world runs on 3D: Speckle enables you to deliver better designs, together.")]
-[Icon(typeof(Resources), nameof(Properties.Resources.logo))]
 public partial class SpeckleAddin : SwAddInEx
 {
+    internal const string AddinId = "0A594824-71FF-4DE9-8DA1-F93113013368";
     const int GWL_HWNDPARENT = -8;
     private bool _useTaskpane = true;
 
@@ -53,6 +68,13 @@ public partial class SpeckleAddin : SwAddInEx
         _host?.Dispose();
         _host = null;
     }
+
+    public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<DesktopUI2.App>()
+        .UsePlatformDetect()
+        .With(new SkiaOptions { MaxGpuResourceSizeBytes = 8096000 })
+        .With(new Win32PlatformOptions { AllowEglInitialization = true, EnableMultitouch = false })
+        .LogToTrace()
+        .UseReactiveUI();
     #endregion
 
     #region Private Methods
@@ -76,17 +98,43 @@ public partial class SpeckleAddin : SwAddInEx
                     }
                 }
                 break;
+            case SwCommands.Scheduler:
+                {
+                    Application.ShowMessageBox("Scheduler is not implemented yet.", MessageBoxIcon_e.Info, MessageBoxButtons_e.Ok);
+                }
+                break;
+            case SwCommands.CommunityForum:
+                {
+                    OpenUrl("https://speckle.community/");
+                }
+                break;
+            case SwCommands.Docs:
+                {
+                    OpenUrl("https://speckle.guide/");
+                }
+                break;
+            case SwCommands.Tutorials:
+                {
+                    OpenUrl("https://speckle.systems/tutorials/");
+                }
+                break;
             default:
                 break;
         }
     }
 
-    public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<DesktopUI2.App>()
-        .UsePlatformDetect()
-        .With(new SkiaOptions { MaxGpuResourceSizeBytes = 8096000 })
-        .With(new Win32PlatformOptions { AllowEglInitialization = true, EnableMultitouch = false })
-        .LogToTrace()
-        .UseReactiveUI();
+    private void OpenUrl(string url)
+    {
+        try
+        {
+            Process.Start(url);
+        }
+        catch (Exception ex)
+        {
+            SpeckleLog.Logger.Error("Fail open speckle url!", ex);
+            Debug.Print(ex.Message);
+        }
+    }
 
     private void AppMain(Application app ,string[] args)
     {

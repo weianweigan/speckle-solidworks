@@ -5,9 +5,15 @@ VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Speckle.ConnectorSolidWorks", "Speckle.Addin\Speckle.ConnectorSolidWorks.csproj", "{EDE2E262-B770-4F8D-B4C6-6B4F22C83A7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Speckle.ConnectorSolidWorksTests", "Speckle.ConnectorSolidWorksTests\Speckle.ConnectorSolidWorksTests.csproj", "{2BC81041-79E6-4322-93AA-3458B90915B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Speckle.ConnectorSolidWorksTests", "Speckle.ConnectorSolidWorksTests\Speckle.ConnectorSolidWorksTests.csproj", "{2BC81041-79E6-4322-93AA-3458B90915B1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaHwndHost", "AvaloniaHwndHost\AvaloniaHwndHost.csproj", "{794FBE19-F50D-4BAB-9C3E-C793F3D2BA81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Objects.Converter.SolidWorks", "Objects.Converter.SolidWorks\Objects.Converter.SolidWorks.csproj", "{49E8763D-4E8E-4B9B-9303-677809D1217D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Speckle.Objects.SolidWorks", "Speckle.Objects.SolidWorks\Speckle.Objects.SolidWorks.csproj", "{C65B41F5-870F-47EB-A78F-4253D339C3F9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E0349399-706F-4930-9C28-98E997A7CB2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,9 +33,20 @@ Global
 		{794FBE19-F50D-4BAB-9C3E-C793F3D2BA81}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{794FBE19-F50D-4BAB-9C3E-C793F3D2BA81}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{794FBE19-F50D-4BAB-9C3E-C793F3D2BA81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49E8763D-4E8E-4B9B-9303-677809D1217D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49E8763D-4E8E-4B9B-9303-677809D1217D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49E8763D-4E8E-4B9B-9303-677809D1217D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49E8763D-4E8E-4B9B-9303-677809D1217D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C65B41F5-870F-47EB-A78F-4253D339C3F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C65B41F5-870F-47EB-A78F-4253D339C3F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C65B41F5-870F-47EB-A78F-4253D339C3F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C65B41F5-870F-47EB-A78F-4253D339C3F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2BC81041-79E6-4322-93AA-3458B90915B1} = {E0349399-706F-4930-9C28-98E997A7CB2D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {843FF0C2-D35E-4866-AA8C-B04C74E08D1E}

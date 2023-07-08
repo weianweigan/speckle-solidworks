@@ -7,17 +7,49 @@ namespace Speckle.ConnectorSolidWorks.UI;
 
 public partial class ConnectorBindingsSolidWorks
 {
+    /// <summary>
+    /// Select solidworks objects by their unique id.
+    /// </summary>
+    /// <remarks>
+    /// <see href="https://help.solidworks.com/2022/english/api/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IModelDocExtension~MultiSelect2.html"/>
+    /// </remarks>
+    /// <param name="objs"></param>
+    /// <param name="deselect"></param>
     public override void SelectClientObjects(
         List<string> objs, 
         bool deselect = false)
     {
+        if (objs == null)
+        {
+            return;
+        }
+
+        var doc = App.IActiveDoc2;
+        if (doc == null)
+        {
+            return;
+        }
+
+        var swSeleObjs = objs
+            .Select(o => SwSeleTypeObjectPair.FromJson(o))
+            .ToList();
+
         if (deselect)
         {
-
+            foreach (var obj in swSeleObjs)
+            {
+                doc.ISelectionManager.DeSelect2(obj.Index, obj.Mark);
+            }
         }
         else
         {
+            foreach (var obj in swSeleObjs)
+            {
+                obj.ReSolveFormPID(doc);
+                doc.Extension.MultiSelect2(null, true, null);
+            }
 
+            doc.Extension.MultiSelect2(swSeleObjs.ToArray(), true, null);
         }
     }
 
@@ -25,10 +57,10 @@ public partial class ConnectorBindingsSolidWorks
     {
         var doc = App.IActiveDoc2;
 
-        return doc
-            ?.GetSelections()
-            .Select(p => p.Name)
-            .ToList();
+        IEnumerable<SwSeleTypeObjectPair>? selections = doc
+            ?.GetSelections();
+
+        return selections.Select(p => p.ToJson()).ToList();
     }
 
     public override List<ISelectionFilter> GetSelectionFilters()

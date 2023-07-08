@@ -2,7 +2,7 @@
 
 namespace Objects.BuiltElements.SolidWorks;
 
-public sealed class AssemblyDocument: Base
+public sealed class SolidWorksAssemblyDocument: Base
 {
 
 }

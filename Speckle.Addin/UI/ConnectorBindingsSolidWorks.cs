@@ -1,6 +1,7 @@
 ﻿using DesktopUI2;
 using DesktopUI2.Models;
 using SolidWorks.Interop.sldworks;
+using Speckle.ConnectorSolidWorks.Extensions;
 using Speckle.Core.Kits;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ public partial class ConnectorBindingsSolidWorks : ConnectorBindings
         App = SwApp.Sw;
     }
 
+    #region Properties
     public override bool CanPreviewSend => true;
 
     public override bool CanPreviewReceive => true;
@@ -25,7 +27,9 @@ public partial class ConnectorBindingsSolidWorks : ConnectorBindings
     public ISldWorks App { get; }
 
     public ISwApplication SwApp { get; }
+    #endregion
 
+    #region Methods 
     public override string? GetActiveViewName()
     {
         return App.IActiveDoc2?.IActiveView?.ToString();
@@ -68,28 +72,49 @@ public partial class ConnectorBindingsSolidWorks : ConnectorBindings
         return doc
             ?.GetAllFeatures()
             .Select(p => p.Name)
+            .Union(new[] {"CustomProperties", "Equations"})
             .ToList();
     }
 
     public override List<ReceiveMode> GetReceiveModes()
     {
-        return new List<ReceiveMode>();
+        return new List<ReceiveMode>() { ReceiveMode.Create};
     }
 
     public override List<StreamState> GetStreamsInFile()
     {
-        return new List<StreamState>();
+        var doc = App.IActiveDoc2;
+
+        if (doc == null)
+        {
+            return new();
+        }
+
+        return SolidWorksStreamStateManager.ReadState(doc);
     }
 
+    /// <summary>
+    /// Clears the document state of selections and previews
+    /// </summary>
     public override void ResetDocument()
     {
-        //Fire when select a stream
+        // Clear selections
         var doc = App.IActiveDoc2;
         doc?.ClearSelection();
+
+        // TODO: Clear previews
     }
 
     public override void WriteStreamsToFile(List<StreamState> streams)
     {
+        var doc = App.IActiveDoc2;
 
+        if (doc == null)
+        {
+            return;
+        }
+
+        SolidWorksStreamStateManager.WriteStreamStateList(doc, streams, App);
     }
+    #endregion
 }
