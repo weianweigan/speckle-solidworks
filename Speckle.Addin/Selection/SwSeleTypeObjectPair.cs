@@ -73,6 +73,9 @@ public class SwSeleTypeObjectPair
     /// <summary>
     /// PID for this object，null default.
     /// </summary>
+    /// <remarks>
+    /// Also as UniqueId.
+    /// </remarks>
     public string PID { get; }
     #endregion
 

@@ -65,6 +65,10 @@ public partial class ConnectorBindingsSolidWorks
 
     public override List<ISelectionFilter> GetSelectionFilters()
     {
+        var doc = App.IActiveDoc2;
+
+        //TODO: implement
+
         return SolidWorksSelectionFilter.CreateAll();
     }
 }

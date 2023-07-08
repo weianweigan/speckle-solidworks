@@ -8,7 +8,7 @@
  *  https://github.com/weianweigan/speckle-solidworks
  * 
  * Figma:
- *  https://www.figma.com/file/DhGlDPUorH08nXtEus0Wtj/speckle-solidworks?type=design
+ *  https://www.figma.com/community/file/1259478907213353448
  */
 
 using Avalonia;

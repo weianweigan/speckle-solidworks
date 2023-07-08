@@ -1,17 +1,27 @@
-﻿using Speckle.Core.Models;
+﻿using Objects.BuiltElements.SolidWorks;
+using Speckle.Core.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Objects.Converter.SolidWorks;
 
 public partial class ConverterSolidWorks
 {
+    private static HashSet<Type> _supportObjects = new HashSet<Type>()
+    {
+        typeof(CustomProperty),
+        typeof(Equation),
+        typeof(BomSheet),
+        typeof(SolidWorksBody),
+        typeof(BuiltElements.SolidWorks.Component),
+        typeof(DrawingSheet),
+        typeof(DrawingView),
+        typeof(BuiltElements.SolidWorks.Sketch),
+    };
+
     public bool CanConvertToNative(Base @object)
     {
-        throw new NotImplementedException();
+        return _supportObjects.Contains(@object.GetType());
     }
 
     public object ConvertToNative(Base @object)
