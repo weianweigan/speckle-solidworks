@@ -14,6 +14,7 @@ public class KitTests
         ISpeckleConverter converter = KitManager.GetDefaultKit().LoadConverter("SolidWorks");
 
         Assert.NotNull(converter);
-        Assert.True(converter.GetType().Name == "Objects.Converter.SolidWorks");
+        var type = converter.GetType();
+        Assert.True(type.Name == "ConverterSolidWorks");
     }
 }

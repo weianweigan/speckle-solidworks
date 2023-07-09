@@ -1,7 +1,6 @@
-﻿using SolidWorks.Interop.sldworks;
-using SolidWorks.Interop.swconst;
+﻿using SolidWorks.Interop.swconst;
+using SolidWorks.Interop.sldworks;
 using System;
-using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -16,24 +15,25 @@ public class SwSeleTypeObjectPair
         swSelectType_e selectType,
         int mark,
         object selectedObject,
-        double[]? point,
+        double[] point,
         string pid)
     {
-        SelectType = selectType;
+        SelectType = selectType; 
         Mark = mark;
         Index = index;
         Point = point;
         SelectedObject = selectedObject;
         PID = pid;
+    }
 
-        if (selectedObject is IFeature feature)
-        {
-            Name = $"{feature.Name}({pid})";
-        }
-        else
-        {
-            Name = pid;
-        }
+    public SwSeleTypeObjectPair(
+        string name,
+        swSelectType_e selectType, 
+        object selectedObject)
+    {
+        Name = name;
+        SelectType = selectType;
+        SelectedObject = selectedObject;
     }
     #endregion
 
@@ -41,7 +41,7 @@ public class SwSeleTypeObjectPair
     /// <summary>
     /// Index base on 1.
     /// </summary>
-    public int Index { get; }
+    public int Index { get; } = -1;
 
     /// <summary>
     /// Mark from SolidWorks.
@@ -63,12 +63,12 @@ public class SwSeleTypeObjectPair
     /// <summary>
     /// Custom tag for track, Optional
     /// </summary>
-    public object? Tag { get; set; }
+    public object Tag { get; set; }
 
     /// <summary>
     /// Selection point from use click
     /// </summary>
-    public double[]? Point { get; set; }
+    public double[] Point { get; set; }
 
     /// <summary>
     /// PID for this object，null default.
@@ -76,7 +76,7 @@ public class SwSeleTypeObjectPair
     /// <remarks>
     /// Also as UniqueId.
     /// </remarks>
-    public string PID { get; }
+    public string PID { get; set; }
     #endregion
 
     #region Methods
@@ -103,7 +103,7 @@ public class SwSeleTypeObjectPair
             || SelectType == swSelectType_e.swSelVERTICES)
         {
             var entity = SelectedObject as IEntity;
-            if (entity?.IsSafe == false)
+            if (entity.IsSafe == false)
                 SelectedObject = entity.GetSafeEntity();
         }
     }

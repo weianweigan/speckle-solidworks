@@ -5,6 +5,7 @@ using DesktopUI2.ViewModels;
 using Serilog.Context;
 using SolidWorks.Interop.sldworks;
 using Speckle.ConnectorSolidWorks.Selection;
+using Speckle.ConnectorSolidWorks.Utils;
 using Speckle.Core.Api;
 using Speckle.Core.Kits;
 using Speckle.Core.Logging;
@@ -71,7 +72,7 @@ public partial class ConnectorBindingsSolidWorks
         var streamId = state.StreamId;
         var client = state.Client;
 
-        var selectedObjects = GetSelectionFilterObjects(state.Filter);
+        List<SwSeleTypeObjectPair> selectedObjects = GetSelectionFilterObjects(state.Filter).ToList();
         state.SelectedObjectIds = selectedObjects.Select(x => x.PID).ToList();
 
         if (!selectedObjects.Any())
@@ -160,7 +161,7 @@ public partial class ConnectorBindingsSolidWorks
             throw new SpeckleException("Zero objects converted successfully. Send stopped.");
         }
 
-        //commitObjectBuilder.BuildCommitObject(commitObject);
+        commitObjectBuilder.BuildCommitObject(commitObject);
 
         var transports = new List<ITransport>() { new ServerTransport(client.Account, streamId) };
 
@@ -244,9 +245,15 @@ public partial class ConnectorBindingsSolidWorks
             .FirstOrDefault();
     }
 
+    /// <summary>
+    /// Get selection by filter
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <returns></returns>
     private IEnumerable<SwSeleTypeObjectPair> GetSelectionFilterObjects(ISelectionFilter filter)
     {
-        return (filter as SolidWorksSelectionFilter)?.Values ?? Enumerable.Empty<SwSeleTypeObjectPair>();
+        var doc = App.IActiveDoc2;
+        return SwDocFilterUtils.Filter(doc, filter);
     }
     #endregion
 }

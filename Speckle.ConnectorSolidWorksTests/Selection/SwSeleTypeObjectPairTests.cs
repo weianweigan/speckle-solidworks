@@ -28,6 +28,5 @@ public class SwSeleTypeObjectPairSerialize
 
         Assert.Equal(s.Name, newS.Name);
         Assert.Equal(s.PID, newS.PID);
-
     }
 }

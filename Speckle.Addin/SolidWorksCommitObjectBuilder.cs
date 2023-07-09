@@ -3,10 +3,13 @@ using Speckle.Core.Models;
 
 namespace Speckle.ConnectorSolidWorks;
 
-public class SolidWorksCommitObjectBuilder : CommitObjectBuilder<SwSeleTypeObjectPair>
+public class SolidWorksCommitObjectBuilder : 
+    CommitObjectBuilder<SwSeleTypeObjectPair>
 {
-    public override void IncludeObject(Base conversionResult, SwSeleTypeObjectPair nativeElement)
+    public override void IncludeObject(
+        Base conversionResult, 
+        SwSeleTypeObjectPair nativeElement)
     {
-
+        SetRelationship(conversionResult);
     }
 }
