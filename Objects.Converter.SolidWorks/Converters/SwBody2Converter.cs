@@ -1,5 +1,4 @@
-﻿using Objects.BuiltElements.SolidWorks;
-using Objects.Converter.SolidWorks.Utils;
+﻿using Objects.Converter.SolidWorks.Utils;
 using Objects.Geometry;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
@@ -16,14 +15,14 @@ internal static class SwBody2Converter
     /// <summary>
     /// Option for body tessellation quality. Default is true.
     /// </summary>
-    public static bool ImproveQuality { get; set; } = true;
+    public static bool ImproveQuality { get; set; } = false;
 
-    public static SolidWorksBody ConvertToSpeckleSwBody(SwSeleTypeObjectPair objectPair)
+    public static BuiltElements.SolidWorks.Body ConvertToSpeckleSwBody(SwSeleTypeObjectPair objectPair)
     {
         return ConvertToSpeckleSwBody(objectPair.SelectedObject as IBody2, objectPair.PID);
     }
 
-    public static SolidWorksBody ConvertToSpeckleSwBody(IBody2 body, string pid = null)
+    public static BuiltElements.SolidWorks.Body ConvertToSpeckleSwBody(IBody2 body, string pid = null)
     {
         var mesh = ConvertToSpeckleMesh(body, pid);
 
@@ -38,8 +37,10 @@ internal static class SwBody2Converter
             _ => (0, 0, "")
         };
 
-        return new SolidWorksBody()
+        return new BuiltElements.SolidWorks.Body()
         {
+            Name = body.Name,
+            applicationId = pid,
             displayValue = mesh,
             volume = volume,
             BodyType = bodyTypeName,
@@ -56,7 +57,6 @@ internal static class SwBody2Converter
         tessellation.NeedVertexNormal = true;
         tessellation.ImprovedQuality = ImproveQuality;
 
-        // How to handle matches across common edges
         tessellation.MatchType = (int)swTesselationMatchType_e.swTesselationMatchFacetTopology;
         // Do it
         bool bResult = tessellation.Tessellate();
@@ -71,26 +71,32 @@ internal static class SwBody2Converter
         List<double> vertices = new();
         List<int> faces = new();
         List<int> colors = new();
+
+        int triangleCount = -1;
         while (face != null)
         {
             int[] vFacetId = (int[])tessellation.GetFaceFacets(face);
 
-            //Should always be three fins per facet
+            // Should always be three fins per facet
             for (int i = 0; i < vFacetId.Length; i++)
             {
                 int[] vFinId = (int[])tessellation.GetFacetFins(vFacetId[i]);
                 for (int j = 0; j < 3; j++)
                 {
                     int[] vVertexId = (int[])tessellation.GetFinVertices(vFinId[j]);
-                    //Should always be two vertices per fin
-                    //double[] vVertex1 = (double[])tessellation.GetVertexPoint(vVertexId[0]);
-                    double[] vVertex2 = (double[])tessellation.GetVertexPoint(vVertexId[1]);
+                    // Should always be two vertices per fin
+                    double[] vVertex0 = (double[])tessellation.GetVertexPoint(vVertexId[0]);
+                    //double[] vVertex1 = (double[])tessellation.GetVertexPoint(vVertexId[1]);
 
-                    vertices.Add(vVertex2[0]); vertices.Add(vVertex2[1]); vertices.Add(vVertex2[2]);
+                    vertices.Add(vVertex0[0]); vertices.Add(vVertex0[1]); vertices.Add(vVertex0[2]);
                 }
-                faces.Add(i);
+                faces.Add(3);// TRIANGLE flag
+                faces.Add(++triangleCount);
+                faces.Add(++triangleCount);
+                faces.Add(++triangleCount);
             }
-            colors.Add(face.ToARGB());
+
+            //colors.Add(face.ToARGB());
             face = (IFace2)face.GetNextFace();
         }
 

@@ -12,7 +12,7 @@ public partial class ConverterSolidWorks
         typeof(CustomProperty),
         typeof(Equation),
         typeof(BomSheet),
-        typeof(SolidWorksBody),
+        typeof(Body),
         typeof(BuiltElements.SolidWorks.Component),
         typeof(DrawingSheet),
         typeof(DrawingView),

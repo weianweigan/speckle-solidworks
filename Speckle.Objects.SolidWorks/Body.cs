@@ -3,13 +3,18 @@ using Speckle.Core.Models;
 
 namespace Objects.BuiltElements.SolidWorks;
 
-public class SolidWorksBody : 
+public class Body : 
     Base, 
     IDisplayValue<Mesh>, 
     IHasVolume, 
     IHasArea,
     IHasBoundingBox
 {
+    /// <summary>
+    /// Body name.
+    /// </summary>
+    public string Name { get; set; }
+
     /// <summary>
     /// Mesh for visualization.
     /// </summary>
