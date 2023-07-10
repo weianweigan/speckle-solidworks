@@ -10,7 +10,9 @@ public static class SwDocumentConverter
     public static Model ConvertToSpeckleModel(IModelDoc2 doc)
     {
         var modeInfo = ToModelInfo(doc);
-        return new Model(modeInfo);
+        return new Model(modeInfo) { 
+            name = modeInfo.name
+        };
     }
 
     public static SwModelInfo ToModelInfo(IModelDoc2 modelDoc)
@@ -28,7 +30,6 @@ public static class SwDocumentConverter
         };
 
         swModelInfo.name = modelDoc.GetTitle();
-        swModelInfo.number = 1.ToString();
 
         return swModelInfo;
     }

@@ -2,7 +2,6 @@
 using Speckle.ConnectorSolidWorks.Selection;
 using Speckle.Core.Models;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Speckle.ConnectorSolidWorks;
 
@@ -22,10 +21,10 @@ public class SolidWorksCommitObjectBuilder :
 
         var bodies = (IList<Base>)(rootCommitObject["bodies"] ??= new List<Base>());
 
-        //Finally, apply collection -> host relationships
-        foreach (var body in converted.Values.OfType<Body>())
+        foreach (var value in converted.Values)
         {
-            bodies.Add(body);
+            if (value is Body)
+                bodies.Add(value);
         }
     }
 }
