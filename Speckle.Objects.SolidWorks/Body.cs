@@ -5,7 +5,7 @@ namespace Objects.BuiltElements.SolidWorks;
 
 public class Body : 
     Base, 
-    IDisplayValue<Mesh>, 
+    IDisplayValue<Base>, 
     IHasVolume, 
     IHasArea,
     IHasBoundingBox
@@ -16,9 +16,13 @@ public class Body :
     public string Name { get; set; }
 
     /// <summary>
-    /// Mesh for visualization.
+    /// Mesh or Brep for visualization.
     /// </summary>
-    public Mesh displayValue { get; set; }
+    /// <remarks>
+    /// <see cref="Mesh"/> or <see cref="Brep"/>
+    /// </remarks>
+    [DetachProperty]
+    public Base displayValue { get; set; }
 
     /// <summary>
     /// BoundingBox

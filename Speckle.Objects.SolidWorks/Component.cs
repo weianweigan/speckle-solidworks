@@ -4,7 +4,7 @@ using Speckle.Core.Models;
 
 namespace Objects.BuiltElements.SolidWorks;
 
-public sealed class Component : Base, IDisplayValue<List<Mesh>>
+public sealed class Component : Base, IDisplayValue<List<Base>>
 {
     /// <summary>
     /// Component name
@@ -21,19 +21,20 @@ public sealed class Component : Base, IDisplayValue<List<Mesh>>
 
     public bool IsLightWeight { get; set; }
 
-    public bool IsSuppressed { get; set; }
+    public bool IsVirtual { get; set; }
 
-    public bool IsInstance { get; set; }
+    public bool IsSuppressed { get; set; }
 
     public string Configuration { get; set; }
 
-    public List<Base> CustomProperties { get; set; }
-
-#pragma warning disable CS8618
+    /// <summary>
+    /// <see cref="Mesh"/> Or <see cref="Brep"/> for visualization.
+    /// </summary>
     [DetachProperty]
-    public List<Mesh> displayValue { get; set; }
+    public List<Base> displayValue { get; set; }
 
     [DetachProperty]
     public List<Base> children { get; set; }
-#pragma warning restore CS8618
+
+    public bool IsPatternInstance { get; set; }
 }

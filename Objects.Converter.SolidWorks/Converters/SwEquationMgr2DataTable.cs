@@ -1,9 +1,6 @@
 ﻿using Objects.Organization;
 using SolidWorks.Interop.sldworks;
 using Speckle.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Objects.Converter.SolidWorks.Converters;
 
@@ -15,11 +12,11 @@ internal static class SwEquationMgr2DataTable
     /// <remarks>
     /// <see href="http://help.solidworks.com/2022/english/api/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IEquationMgr_members.html"/>
     /// </remarks>
-    /// <param name="customPropertyMgr"></param>
+    /// <param name="equationMgr"></param>
     /// <param name="pid"></param>
     /// <returns></returns>
     public static DataTable ToSpeckleDataTable(
-        IEquationMgr customPropertyMgr, 
+        IEquationMgr equationMgr, 
         string pid = nameof(EquationMgr))
     {
         var dataTable = new DataTable() { 
@@ -28,14 +25,31 @@ internal static class SwEquationMgr2DataTable
 
         // Define columns.
         var columnMetadata = new Base();
+        columnMetadata["Equation"] = "SwEquation";
         // TODO
         dataTable.DefineColumn(columnMetadata);
 
         // Add rows.
         var metadata = new Base();
 
-        // TODO
-        dataTable.AddRow(metadata, objects: new string[] { });
+        // Add row header.
+        dataTable.AddRow(
+            metadata, 
+            objects: new string[] { "Equation" }, 
+            index: dataTable.headerRowIndex);
+
+        int count = equationMgr.GetCount();
+        if (count <= 0)
+        {
+            return dataTable;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            // TODO: Separate equation into name and value.
+            string value = equationMgr.Equation[i];
+            dataTable.AddRow(metadata, objects: new string[] { value});
+        }
 
         return dataTable;
     }

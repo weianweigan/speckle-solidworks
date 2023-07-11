@@ -7,7 +7,7 @@ namespace Objects.Converter.SolidWorks.Converters;
 
 public static class SwDocumentConverter
 {
-    public static Model ConvertToSpeckleModel(IModelDoc2 doc)
+    public static Model ToSpeckleModel(IModelDoc2 doc)
     {
         var modeInfo = ToModelInfo(doc);
         return new Model(modeInfo) { 

@@ -133,7 +133,7 @@ public partial class ConnectorBindingsSolidWorks
                     result.applicationId,
                     reportObj.applicationId
                   );
-                    result.applicationId = reportObj.applicationId;
+                  result.applicationId = reportObj.applicationId;
                 }
                 commitObjectBuilder.IncludeObject(result, swObject);
                 convertedCount++;

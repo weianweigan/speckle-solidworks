@@ -24,7 +24,14 @@ internal static class SwDocFilterUtils
 
         foreach (var item in items)
         {
-            item.PID = PIDUtils.GetPID(doc, item.SelectedObject);
+            if (item.SelectType == swSelectType_e.swSelNOTHING)
+            {
+                item.PID = item.Name;
+            }
+            else
+            {
+                item.PID = PIDUtils.GetPID(doc, item.SelectedObject);
+            }
             yield return item;
         }
     }
@@ -36,13 +43,39 @@ internal static class SwDocFilterUtils
 
     public static IEnumerable<SwSeleTypeObjectPair> All(IModelDoc2 doc)
     {
-        if (doc is IPartDoc partDoc)
+        var customPropertyMgr = CustomPropertyManager(doc);
+        if (customPropertyMgr != null)
         {
-            return Bodies(partDoc);
+            yield return customPropertyMgr;
         }
-        else
+
+        var equationMgr = EquationMgr(doc);
+        if (equationMgr != null)
         {
-            return Enumerable.Empty<SwSeleTypeObjectPair>();
+            yield return equationMgr;
+        }
+
+        var features = doc.GetTopFeatures();
+
+        swDocumentTypes_e docType = (swDocumentTypes_e)doc.GetType();
+
+        if (docType == swDocumentTypes_e.swDocPART)
+        {
+            foreach (var item in Bodies((IPartDoc)doc))
+            {
+                yield return item;
+            }
+        }
+
+        foreach (var feature in features)
+        {
+            string typeName = feature.GetTypeName2();
+            if(docType == swDocumentTypes_e.swDocASSEMBLY && typeName == FeatTypeNameUtil.Component)
+            {
+                var comp = (IComponent2)feature.GetSpecificFeature2();
+                yield return new SwSeleTypeObjectPair(comp.Name2, swSelectType_e.swSelCOMPONENTS, comp) ;
+            }
+            // TODO: Features
         }
     }
 
@@ -50,22 +83,54 @@ internal static class SwDocFilterUtils
         IModelDoc2 doc, 
         ListSelectionFilter listSelectionFilter)
     {
+        swDocumentTypes_e docType = (swDocumentTypes_e)doc.GetType();
+
         var types = listSelectionFilter.Selection
-            .Select(f => Enum.Parse(typeof(SolidWorksFilterType),f))
+            .Select(f => (SolidWorksFilterType)Enum.Parse(typeof(SolidWorksFilterType),f))
+            .Distinct()
             .ToList();
 
-        var items = Enumerable.Empty<SwSeleTypeObjectPair>();
         foreach (var type in types)
         {
-            var itemsByType = type switch
+            if (docType == swDocumentTypes_e.swDocPART && type == SolidWorksFilterType.Body)
             {
-                SolidWorksFilterType.Body => Bodies(doc as IPartDoc),
-                _ => throw new NotSupportedException($"Not support SolidWorksFilterType:{type}")
-            };
-            items = items.Union(itemsByType);
+                foreach (var item in Bodies((IPartDoc)doc))
+                {
+                    yield return item;
+                }
+            }
+
+            if (type == SolidWorksFilterType.CustomProperty)
+            {
+                var customPropertyMgr = CustomPropertyManager(doc);
+                if (customPropertyMgr != null)
+                {
+                    yield return customPropertyMgr;
+                }
+            }
+            if (type == SolidWorksFilterType.Equation)
+            {
+                var equationMgr = EquationMgr(doc);
+                if (equationMgr != null)
+                {
+                    yield return equationMgr;
+                }
+            }
         }
 
-        return items;
+        var features = doc.GetTopFeatures();
+
+        bool hasComponent = types.Contains(SolidWorksFilterType.Component);
+        foreach (var feature in features)
+        {
+            string typeName = feature.GetTypeName2();
+            if (hasComponent && docType == swDocumentTypes_e.swDocASSEMBLY && typeName == FeatTypeNameUtil.Component)
+            {
+                var comp = (IComponent2)feature.GetSpecificFeature2();
+                yield return new SwSeleTypeObjectPair(comp.Name2, swSelectType_e.swSelCOMPONENTS, comp);
+            }
+            // TODO: Features
+        }
     }
 
     public static IEnumerable<SwSeleTypeObjectPair> Bodies(IPartDoc? doc)
@@ -85,5 +150,31 @@ internal static class SwDocFilterUtils
             .Select(b => new SwSeleTypeObjectPair(b.Name, swSelectType_e.swSelSOLIDBODIES, b));
 
         return bodies;
+    }
+
+    public static SwSeleTypeObjectPair? CustomPropertyManager(IModelDoc2 doc)
+    {
+        var customPropertyMgr = doc.Extension.CustomPropertyManager[""];
+        if (customPropertyMgr != null)
+        {
+            return new SwSeleTypeObjectPair(nameof(CustomPropertyManager), swSelectType_e.swSelNOTHING, customPropertyMgr);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public static SwSeleTypeObjectPair? EquationMgr(IModelDoc2 doc)
+    {
+        var equationMgr = doc.GetEquationMgr();
+        if (equationMgr != null)
+        {
+            return new SwSeleTypeObjectPair(nameof(EquationMgr), swSelectType_e.swSelNOTHING, equationMgr);
+        }
+        else
+        {
+            return null;
+        }
     }
 } 

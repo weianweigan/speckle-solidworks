@@ -19,7 +19,7 @@ internal static class SolidWorksStreamStateManager
 {
     private const string ATTRIBUTE_PARAMETER_NAME = "StreamStates";
 
-    public static List<StreamState> ReadState(IModelDoc2 doc)
+    public static List<StreamState> ReadState(this IModelDoc2 doc)
     {
         // Check if attribute exists
         IFeature? attributeFeat = doc.FinsSpeckleAttribute();
@@ -45,7 +45,7 @@ internal static class SolidWorksStreamStateManager
     /// <param name="streamStates">Stream states.</param>
     /// <param name="app">Solidworks interface.</param>
     public static void WriteStreamStateList(
-        IModelDoc2 doc, 
+        this IModelDoc2 doc, 
         List<StreamState> streamStates, 
         ISldWorks app)
 	{
@@ -93,6 +93,8 @@ internal static class SolidWorksStreamStateManager
 
             // Notify Solidworks that something has changed
             doc.SetSaveFlag();
+
+            doc.FeatureManager.UpdateFeatureTree();
         }
         catch (Exception e)
         {

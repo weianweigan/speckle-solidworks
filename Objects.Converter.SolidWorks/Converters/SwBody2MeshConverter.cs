@@ -3,6 +3,7 @@ using Objects.Geometry;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using Speckle.ConnectorSolidWorks.Selection;
+using Speckle.Objects.SolidWorks;
 using System.Collections.Generic;
 
 namespace Objects.Converter.SolidWorks.Converters;
@@ -10,32 +11,27 @@ namespace Objects.Converter.SolidWorks.Converters;
 /// <summary>
 /// Converter that turns a SolidWorks Body into a Speckle Mesh.
 /// </summary>
-internal static class SwBody2Converter
+internal static class SwBody2MeshConverter
 {
     /// <summary>
     /// Option for body tessellation quality. Default is true.
     /// </summary>
     public static bool ImproveQuality { get; set; } = false;
 
-    public static BuiltElements.SolidWorks.Body ConvertToSpeckleSwBody(SwSeleTypeObjectPair objectPair)
+    public static BuiltElements.SolidWorks.Body ToSpeckle(
+        SwSeleTypeObjectPair objectPair, MaterialValue? materialValue)
     {
-        return ConvertToSpeckleSwBody(objectPair.SelectedObject as IBody2, objectPair.PID);
+        return ToSpeckle(objectPair.SelectedObject as IBody2, materialValue, objectPair.PID);
     }
 
-    public static BuiltElements.SolidWorks.Body ConvertToSpeckleSwBody(IBody2 body, string pid = null)
+    public static BuiltElements.SolidWorks.Body ToSpeckle(
+        IBody2 body,
+        MaterialValue? materialValue,
+        string pid = null)
     {
-        var mesh = ConvertToSpeckleMesh(body, pid);
+        Mesh mesh = ToSpeckleMesh(body, materialValue, pid);
 
-        //https://help.solidworks.com/2022/english/api/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IBody2~GetMassProperties.html
-        var massProperties = (double[])body.GetMassProperties(1);
-
-        var bodyType = (swBodyType_e)body.GetType();
-        var (volume,area,bodyTypeName) = bodyType switch
-        {
-            swBodyType_e.swSheetBody => (massProperties[3], massProperties[4], "SheetBody"),
-            swBodyType_e.swSolidBody => (massProperties[3], massProperties[3], "SolidBody"),
-            _ => (0, 0, "")
-        };
+        var (volume, area, bodyTypeName) = GetBodyInformation(body);
 
         return new BuiltElements.SolidWorks.Body()
         {
@@ -48,7 +44,10 @@ internal static class SwBody2Converter
         };
     }
 
-    public static Mesh ConvertToSpeckleMesh(IBody2 body, string pid = null)
+    public static Mesh ToSpeckleMesh(
+        IBody2 body, 
+        MaterialValue? materialValue, 
+        string pid = null)
     {
         var tessellation = (ITessellation)body.GetTessellation(null);
 
@@ -65,6 +64,8 @@ internal static class SwBody2Converter
             Speckle.Core.Logging.SpeckleLog.Logger.Information("Tessellation failed");
             return new Mesh();
         }
+
+        MaterialValue? bodyMaterialValue = body.GetMaterialValue() ?? materialValue;
 
         // Tess all faces
         var face = (IFace2)body.GetFirstFace();
@@ -91,23 +92,47 @@ internal static class SwBody2Converter
                     vertices.Add(vVertex0[0]); vertices.Add(vVertex0[1]); vertices.Add(vVertex0[2]);
                 }
                 faces.Add(3);// TRIANGLE flag
-                faces.Add(++triangleCount);
-                faces.Add(++triangleCount);
-                faces.Add(++triangleCount);
-            }
+                faces.Add(triangleCount + 1);
+                faces.Add(++triangleCount + 2);
+                faces.Add(++triangleCount + 3);
 
-            //colors.Add(face.ToARGB());
+                int? color = face.ToARGB();
+                if (color != null)
+                {
+                    colors.Add(triangleCount + 1);
+                    colors.Add(++triangleCount + 2);
+                    colors.Add(++triangleCount + 3);
+                    colors.Add(color.Value);
+                }
+
+                triangleCount += 3;
+            }
             face = (IFace2)face.GetNextFace();
         }
 
         var mesh = new Mesh(vertices, faces, colors, applicationId: pid);
 
-        Other.RenderMaterial renderMaterial = body.GetRenderMaterial();
+        Other.RenderMaterial renderMaterial = bodyMaterialValue.GetRenderMaterial();
         if (renderMaterial != null)
         {
             mesh["renderMaterial"] = renderMaterial;
         }
 
         return mesh;
+    }
+
+    public static (double, double, string) GetBodyInformation(
+    IBody2 body)
+    {
+        //https://help.solidworks.com/2022/english/api/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IBody2~GetMassProperties.html
+        var massProperties = (double[])body.GetMassProperties(1);
+
+        var bodyType = (swBodyType_e)body.GetType();
+        return bodyType switch
+        {
+            swBodyType_e.swSheetBody => (massProperties[3], massProperties[4], "SheetBody"),
+            swBodyType_e.swSolidBody => (massProperties[3], massProperties[3], "SolidBody"),
+            _ => (0, 0, "")
+        };
     }
 }
