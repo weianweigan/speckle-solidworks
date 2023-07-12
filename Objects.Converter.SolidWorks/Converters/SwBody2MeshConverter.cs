@@ -93,15 +93,15 @@ internal static class SwBody2MeshConverter
                 }
                 faces.Add(3);// TRIANGLE flag
                 faces.Add(triangleCount + 1);
-                faces.Add(++triangleCount + 2);
-                faces.Add(++triangleCount + 3);
+                faces.Add(triangleCount + 2);
+                faces.Add(triangleCount + 3);
 
                 int? color = face.ToARGB();
                 if (color != null)
                 {
                     colors.Add(triangleCount + 1);
-                    colors.Add(++triangleCount + 2);
-                    colors.Add(++triangleCount + 3);
+                    colors.Add(triangleCount + 2);
+                    colors.Add(triangleCount + 3);
                     colors.Add(color.Value);
                 }
 
@@ -115,7 +115,7 @@ internal static class SwBody2MeshConverter
         Other.RenderMaterial renderMaterial = bodyMaterialValue.GetRenderMaterial();
         if (renderMaterial != null)
         {
-            mesh["renderMaterial"] = renderMaterial;
+            //mesh["renderMaterial"] = renderMaterial;
         }
 
         return mesh;

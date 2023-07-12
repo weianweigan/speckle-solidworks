@@ -10,6 +10,7 @@ namespace Objects.Converter.SolidWorks.Converters;
 
 internal static class SwBodyToBrepConverter
 {
+    // Temp use mesh until brep converter are implemented
     public static bool UseMesh = true;
 
     public static BuiltElements.SolidWorks.Body ToSpeckle(
@@ -32,6 +33,16 @@ internal static class SwBodyToBrepConverter
         Base display;
         if (UseMesh)
         {
+            Mesh mesh = SwBody2MeshConverter.ToSpeckleMesh(body, materialValue, pid);
+            if (transform != null)
+            {
+                mesh.TransformTo(transform, out Mesh newMesh);
+                mesh = newMesh;
+            }
+            display = mesh;
+        }
+        else
+        {
             var brep = ConvertToSpeckleBrep(body, materialValue, pid);
             if (transform != null)
             {
@@ -39,16 +50,6 @@ internal static class SwBodyToBrepConverter
                 brep = newBrep;
             }
             display = brep;
-        }
-        else
-        {
-            Mesh mesh = SwBody2MeshConverter.ToSpeckleMesh(body,materialValue ,pid);
-            if (transform != null)
-            {
-                mesh.TransformTo(transform, out Mesh newMesh);
-                mesh = newMesh;
-            }
-            display = mesh;
         }
         //https://help.solidworks.com/2022/english/api/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IBody2~GetMassProperties.html
         var massProperties = (double[])body.GetMassProperties(1);

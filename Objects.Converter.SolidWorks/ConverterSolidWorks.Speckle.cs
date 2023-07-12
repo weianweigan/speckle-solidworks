@@ -65,7 +65,7 @@ public partial class ConverterSolidWorks
             {
                 return swSeleTypeObjectPair.SelectType switch
                 {
-                    swconst.swSelectType_e.swSelSOLIDBODIES => SwBody2MeshConverter.ToSpeckle(swSeleTypeObjectPair, materialValue),
+                    swconst.swSelectType_e.swSelSOLIDBODIES => SwBodyToBrepConverter.ToSpeckle(swSeleTypeObjectPair, materialValue),
                     swconst.swSelectType_e.swSelCOMPONENTS => SwComponent2ToComponentConverter.ToSpeckle(Doc, swSeleTypeObjectPair, materialValue),
                     _ => null
                 };
